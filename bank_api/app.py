@@ -4,6 +4,7 @@ from flask import Flask
 from flask_restx import Api, Resource, reqparse, fields, abort
 
 from bank_api.bank import Bank
+from bank_api.bank_report import BankReport
 
 
 # Set up framework and service classes
@@ -12,6 +13,7 @@ app = Flask(__name__)
 api = Api(app, title='My Banking API',
           description='A simple banking API for learning Test-Driven-Development')
 bank = Bank()
+bank_report = BankReport(bank)
 
 # Custom API documentation
 add_money = api.model("Add", {
@@ -47,6 +49,15 @@ class MoneyResource(Resource):
         parser.add_argument('amount', type=int, help='Transfer amount (pence)')
         args = parser.parse_args()
         return bank.add_funds(**args)
+
+@api.route('/accounts/<string:name>/balance')
+class BalanceResource(Resource):
+    def get(self, name):
+        """Get balance of an Account"""
+        try:
+            return bank_report.get_balance(name)
+        except Exception as e:
+            abort(400, str(e))
 
 
 if __name__ == '__main__':
