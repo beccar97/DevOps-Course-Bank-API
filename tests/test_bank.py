@@ -45,4 +45,32 @@ def test_cannot_modify_accounts_set(bank):
 
 
 # TODO: Add unit tests for bank.add_funds()
+def test_can_add_funds(bank):
+    bank.create_account('Test')
+    
+    bank.add_funds('Test', 10)
+    transaction = list(bank.transactions)[0]
 
+    assert len(bank.transactions) == 1
+    assert transaction.account == Account('Test')
+    assert transaction.amount == 10
+
+def test_can_add_negative_funds(bank):
+    bank.create_account('Test')
+    
+    bank.add_funds('Test', -10)
+    transaction = list(bank.transactions)[0]
+
+    assert len(bank.transactions) == 1
+    assert transaction.account == Account('Test')
+    assert transaction.amount == -10
+
+def test_cannot_add_decimal_funds(bank):
+    bank.create_account('Test')
+    
+    with pytest.raises(ValueError):
+        bank.add_funds('Test', 3.14)
+
+def test_cannot_add_funds_to_non_existing_account(bank):
+    with pytest.raises(ValueError):
+        bank.add_funds('Test', 3.14)

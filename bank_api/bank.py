@@ -45,6 +45,9 @@ class Bank:
 
     def add_funds(self, name: str, amount: int) -> None:
         """Add funds to the named account"""
+        if not isinstance(amount, int):
+            raise ValueError(f'Received: "{amount}". Amount must be an int!')
+
         account = self.get_account(name)
         now = datetime.now()
         self._transactions.add(Transaction(account, now, amount))
